@@ -1,0 +1,16 @@
+- name: Launch an EC2 Instance
+  hosts: localhost
+  tasks:
+  - name: Launch EC2 Instance
+    ec2:
+      key_name: <your_key>
+      instance_type: t2.micro
+      region: ap-south-1
+      wait: yes
+      image: ami-0651f1bab1a933ae5
+      count: 4
+      vpc_subnet_id: subnet-08c087c9b13a34af6
+      assign_public_ip: yes
+      instance_tags:
+        env: prod
+        Name: ansible_creation

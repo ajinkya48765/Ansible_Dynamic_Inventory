@@ -1,0 +1,34 @@
+---
+ - name: create json file
+   hosts: localhost
+   tasks:
+        - name: Create json file
+          shell: ansible-inventory -i aws_ec2.yaml --list > inventory.json
+        
+        - name: Read JSON File and Store in variable
+          shell: cat inventory.json
+          register: result
+
+        - name: Create set_fact From the Result
+          set_fact:
+            jsondata: "{{ result.stdout | from_json }}"
+        
+        - name: Fetch AMI-IDS
+          set_fact:
+            instance_ids:  "{{ jsondata | json_query(jmesquery) }}"
+          vars:
+            jmesquery: '_meta.hostvars.*.instance_id'
+
+        - name: Print All Instance IDS
+          debug:
+            msg: "{{ item}}"
+          with_items:
+            - "{{ instance_ids }}"
+
+        - name: Remove EC2 Instances
+          ec2:
+            region: ap-south-1
+            state: absent
+            instance_ids: '{{ instance_ids }}'
+            wait: True
+

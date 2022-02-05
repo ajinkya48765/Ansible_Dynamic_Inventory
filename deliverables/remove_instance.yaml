@@ -1,0 +1,9 @@
+- name: Remove EC2 Instances
+  hosts: localhost
+  tasks:
+  - name: Remove EC2 Instances
+    ec2:
+      region: ap-south-1
+      state: absent
+      instance_ids: '{{ ec2_ids }}'
+      wait: True
